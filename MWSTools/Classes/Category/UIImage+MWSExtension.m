@@ -51,20 +51,17 @@
 
 @end
 
-typedef NS_ENUM(NSInteger, DeviceClass) {
-    DeviceClass_iPhone, //因为xcassets里自带1x和2x，所以对非Retina和Retina不做区分
-    DeviceClass_iPhone5,
-    DeviceClass_iPhone6,
-    DeviceClass_iPhone6plus,// 这里只是对今后可能的“同样使用3x的scale但是分辨率不同”的设备做个预留，
-                            // 实际上可以放在xcassets的3x里而不单独拿出来
-
-    DeviceClass_iPad, // 因为在xcassets里勾选iPad后会自动出现1x和2x，所以不去区分是否是Retina屏幕，
-                      // 而且事实上在“使用相同scale但分辨率不同”的iPad出现之前这个分类是没用的
-
-    DeviceClass_unknown
+typedef NS_ENUM(NSInteger, MWSDeviceClass) {
+    mws_DeviceClass_iPhone,
+    mws_DeviceClass_iPhone5,
+    mws_DeviceClass_iPhone6,
+    mws_DeviceClass_iPhone6plus,
+    mws_DeviceClass_iPhoneX,
+    mws_DeviceClass_iPad,
+    mws_DeviceClass_unknown
 };
 
-DeviceClass currentDeviceClass() {
+MWSDeviceClass mws_currentDeviceClass() {
 
     CGFloat screenWidth = [[UIScreen mainScreen] bounds].size.width;
     CGFloat screenHeight = [[UIScreen mainScreen] bounds].size.height;
@@ -72,25 +69,27 @@ DeviceClass currentDeviceClass() {
     
     switch ((NSInteger)greaterPixelDimension) {
         case 480:
-            return DeviceClass_iPhone;
+            return mws_DeviceClass_iPhone;
             break;
         case 568:
-            return DeviceClass_iPhone5;
+            return mws_DeviceClass_iPhone5;
             break;
         case 667:
-            return DeviceClass_iPhone6;
+            return mws_DeviceClass_iPhone6;
             break;
         case 736:
-            return DeviceClass_iPhone6plus;
+            return mws_DeviceClass_iPhone6plus;
             break;
+        case 812:
+            return mws_DeviceClass_iPhoneX;
         case 1024:
-            return DeviceClass_iPad;
+            return mws_DeviceClass_iPad;
             break;
         case 1366:
-            return DeviceClass_iPad;
+            return mws_DeviceClass_iPad;
             break;
         default:
-            return DeviceClass_unknown;
+            return mws_DeviceClass_unknown;
             break;
     }
 }
@@ -113,23 +112,26 @@ DeviceClass currentDeviceClass() {
 #pragma mark - private methods
 + (NSString *)mws_magicSuffixForDevice
 {
-    switch (currentDeviceClass()) {
-        case DeviceClass_iPhone:
+    switch (mws_currentDeviceClass()) {
+        case mws_DeviceClass_iPhone:
             return @"_480h";
             break;
-        case DeviceClass_iPhone5:
+        case mws_DeviceClass_iPhone5:
             return @"_568h"; //只是个命名约定
             break;
-        case DeviceClass_iPhone6:
+        case mws_DeviceClass_iPhone6:
             return @"_667h"; //只是个命名约定
             break;
-        case DeviceClass_iPhone6plus:
+        case mws_DeviceClass_iPhone6plus:
             return @"_736h"; //主要是防止以后出现其他尺寸不同的@3x的设备，不然可以和不带后缀的放一起
             break;
-        case DeviceClass_iPad:
+        case mws_DeviceClass_iPhoneX:
+            return @"_812h";
+            break;
+        case mws_DeviceClass_iPad:
             return @"_iPad";
             break;
-        case DeviceClass_unknown:
+        case mws_DeviceClass_unknown:
         default:
             return @"";
             break;
@@ -424,46 +426,6 @@ DeviceClass currentDeviceClass() {
     
     return newImage;
 }
-
-- (UIImage *)mws_ircleImageBigBorderWidth:(CGFloat)bigBorderWidth bigBorderColor:(UIColor *)bigBorderColor littleBorderWidth:(CGFloat)littleBorderWidth littleBorderColor:(UIColor *)littleBorderColor {
-    CGFloat imageW = self.size.width + 2 * bigBorderWidth;
-    CGFloat imageH = self.size.height + 2 * bigBorderWidth;
-    CGSize imageSize = CGSizeMake(imageW, imageH);
-    UIGraphicsBeginImageContextWithOptions(imageSize, NO, 0.0);
-    
-    CGContextRef ctx = UIGraphicsGetCurrentContext();
-    //大大圆
-    [bigBorderColor set];
-    CGFloat bigbigRadius = imageW * 0.5; // 大圆半径
-    CGFloat bigcenterX = bigbigRadius; // 圆心
-    CGFloat bigcenterY = bigbigRadius;
-    CGContextAddArc(ctx, bigcenterX, bigcenterY, bigbigRadius, 0, M_PI * 2, 0);
-    CGContextFillPath(ctx); // 画圆
-    
-    // 大圆
-    [littleBorderColor set];
-    CGFloat bigRadius = bigbigRadius-bigBorderWidth; // 大圆半径
-    CGContextAddArc(ctx, bigcenterX, bigcenterY, bigRadius, 0, M_PI * 2, 0);
-    CGContextFillPath(ctx); // 画圆
-    
-    // 小圆
-    CGFloat smallRadius = bigRadius - littleBorderWidth;
-    CGContextAddArc(ctx, bigcenterX, bigcenterY, smallRadius, 0, M_PI * 2, 0);
-    // 裁剪(后面画的东西才会受裁剪的影响)
-    CGContextClip(ctx);
-    
-    // 画图
-    [self drawInRect:CGRectMake(bigBorderWidth, bigBorderWidth, self.size.width, self.size.height)];
-    
-    // 取图
-    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
-    
-    // 结束上下文
-    UIGraphicsEndImageContext();
-    
-    return newImage;
-}
-
 
 - (UIImage *)mws_clipToCornerRadius:(CGFloat)radius {
     UIGraphicsBeginImageContext(self.size);

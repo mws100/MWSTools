@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
   #  summary should be tweet-length, and the description more in depth.
   #
 
-  s.name         = "WSTools"
+  s.name         = "MWSTools"
   s.version      = "0.0.1"
   s.summary      = "tools"
 
@@ -28,7 +28,7 @@ Pod::Spec.new do |s|
   It is my iOS tools.
   DESC
 
-  s.homepage     = "https://github.com/mws100/WSTools"
+  s.homepage     = "https://github.com/mws100/MWSTools"
   # s.screenshots  = "www.example.com/screenshots_1.gif", "www.example.com/screenshots_2.gif"
 
 
@@ -80,7 +80,7 @@ Pod::Spec.new do |s|
   #  Supports git, hg, bzr, svn and HTTP.
   #
 
-  s.source       = { :git => "https://github.com/mws100/WSTools.git", :tag => "#{s.version}" }
+  s.source       = { :git => "https://github.com/mws100/MWSTools.git", :tag => "#{s.version}" }
 
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
@@ -91,10 +91,10 @@ Pod::Spec.new do |s|
   #  Not including the public_header_files will make all headers public.
   #
 
-  s.source_files  = "WSTools/Classes/*", "WSTools/Classes/Category/*"
+  s.source_files  = "MWSTools/Classes/*", "MWSTools/Classes/Category/*"
   # s.exclude_files = "WSTools/Classes/Category/*"
 
-  s.public_header_files = "WSTools/Classes/*.h", "WSTools/Classes/Category/*.h"
+  s.public_header_files = "MWSTools/Classes/*.h", "MWSTools/Classes/Category/*.h"
 
 
   # ――― Resources ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
